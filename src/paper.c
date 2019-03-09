@@ -69,7 +69,6 @@ static void config_surface(void* data, struct zwlr_layer_surface_v1* surface, ui
 
 static void get_res(void* data, struct wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh) {
 	(void) output;
-	(void) flags;
 	(void) refresh;
 	if((flags & WL_OUTPUT_MODE_CURRENT) == WL_OUTPUT_MODE_CURRENT) {
 		struct node* node = data;
