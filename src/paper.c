@@ -172,7 +172,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps) {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-	float vbo_data[] = {
+	GLfloat vbo_data[] = {
 		-1.0f, 1.0f,	//Top left
 		-1.0f, -1.0f,	//Bottom left
 		1.0f, -1.0f,	//Bottom right
@@ -182,7 +182,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps) {
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, vbo_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8, vbo_data, GL_STATIC_DRAW);
 
 	GLuint ebo_data[] = {
 		0, 1, 2,

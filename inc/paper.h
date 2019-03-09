@@ -19,6 +19,7 @@
 #define PAPER_H
 
 #include <time.h>
+#include <utils.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -26,7 +27,6 @@
 #include <stdbool.h>
 #include <EGL/egl.h>
 #include <glad/glad.h>
-#include <utils.h>
 #include <wayland-egl.h>
 #include <wayland-client.h>
 #include <xdg-output-unstable-v1-client-protocol.h>
