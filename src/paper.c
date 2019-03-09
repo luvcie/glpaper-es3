@@ -17,13 +17,13 @@
 
 #include <paper.h>
 
-const char* monitor;
-struct node* output;
-struct wl_list outputs;
-struct wl_compositor* comp;
-struct zwlr_layer_shell_v1* shell;
-struct zxdg_output_manager_v1* output_manager;
-time_t start;
+static const char* monitor;
+static struct node* output;
+static struct wl_list outputs;
+static struct wl_compositor* comp;
+static struct zwlr_layer_shell_v1* shell;
+static struct zxdg_output_manager_v1* output_manager;
+static time_t start;
 
 struct node {
 	struct wl_output* output;
