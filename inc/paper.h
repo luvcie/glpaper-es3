@@ -25,14 +25,12 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
-#include <EGL/egl.h>
 #include <glad/glad.h>
+#include <glad/glad_egl.h>
 #include <wayland-egl.h>
 #include <wayland-client.h>
 #include <xdg-output-unstable-v1-client-protocol.h>
 #include <wlr-layer-shell-unstable-v1-client-protocol.h>
-
-#define EGL_PLATFORM_WAYLAND_KHR	0x31D8
 
 void paper_init(char* monitor, char* frag_path, uint16_t fps);
 
