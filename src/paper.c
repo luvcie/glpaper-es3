@@ -137,7 +137,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps) {
 	eglBindAPI(EGL_OPENGL_API);
 	EGLDisplay egl_display = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl, NULL);
 	eglInitialize(egl_display, NULL, NULL);
-	EGLint const win_attrib[] = {
+	const EGLint win_attrib[] = {
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 		EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
 		EGL_RED_SIZE, 8,
@@ -149,7 +149,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps) {
 	EGLConfig config;
 	EGLint config_len;
 	eglChooseConfig(egl_display, win_attrib, &config, 1, &config_len);
-	EGLint const ctx_attrib[] = {
+	const EGLint ctx_attrib[] = {
 		EGL_CONTEXT_MAJOR_VERSION, 3,
 		EGL_CONTEXT_MINOR_VERSION, 3,
 		EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
