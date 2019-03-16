@@ -255,6 +255,9 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps) {
 	time_t frame_start;
 
 	while(true) {
+		if(wl_display_flush(wl) == -1) {
+			exit(0);
+		}
 		frame_start = utils_get_time_millis();
 		glClear(GL_COLOR_BUFFER_BIT);
 		GLint time_var = glGetUniformLocation(shader_prog, "time");
