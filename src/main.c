@@ -64,6 +64,7 @@ static struct map* parse_args(int argc, char** argv) {
 	} else {
 		print_usage(argv);
 	}
+	map_free(abrev);
 	return ret;
 }
 
