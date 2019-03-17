@@ -32,6 +32,7 @@ static void print_usage(char** argv) {
 	printf("Options:\n");
 	printf("--help\t-h\tDisplays this help message\n");
 	printf("--fps\t-f\tSets the FPS to render at\n");
+	printf("--layer\t-l\tSpecifies layer to run on\n");
 	exit(0);
 }
 
@@ -39,6 +40,7 @@ static struct map* parse_args(int argc, char** argv) {
 	struct map* ret = map_init();
 	struct map* abrev = map_init();
 	map_put(abrev, "f", "fps");
+	map_put(abrev, "l", "layer");
 	if(argc > 1) {
 		for(uint8_t count = 1; count < argc; ++count) {
 			if(strcmp(argv[count], "-h") == 0 || strcmp(argv[count], "--help") == 0) {
@@ -48,7 +50,8 @@ static struct map* parse_args(int argc, char** argv) {
 					map_put(ret, argv[count] + 2, argv[count + 1]);
 					++count;
 				} else if(strncmp(argv[count], "-", 1) == 0) {
-					for(uint8_t chr = 1; chr < strlen(argv[count]); ++chr) {
+					size_t len = strlen(argv[count]);
+					for(uint8_t chr = 1; chr < len; ++chr) {
 						char str[2] = {argv[count][chr], 0};
 						map_put(ret, map_get(abrev, str), argv[++count]);
 					}
@@ -78,7 +81,7 @@ int main(int argc, char** argv) {
 		} else {
 			fps = strtol(fpsStr, NULL, 10);
 		}
-		paper_init(map_get(args, "_output"), map_get(args, "_shader"), fps);
+		paper_init(map_get(args, "_output"), map_get(args, "_shader"), fps, map_get(args, "layer"));
 	} else {
 		print_usage(argv);
 	}

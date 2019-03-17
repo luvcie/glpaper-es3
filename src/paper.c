@@ -77,7 +77,7 @@ static void get_res(void* data, struct wl_output* output, uint32_t flags, int32_
 	}
 }
 
-void paper_init(char* _monitor, char* frag_path, uint16_t fps) {
+void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name) {
 	monitor = _monitor;
 	start = utils_get_time_millis();
 	wl_list_init(&outputs);
@@ -124,7 +124,22 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps) {
 	wl_surface_set_input_region(wl_surface, input_region);
 	wl_display_roundtrip(wl);
 
-	struct zwlr_layer_surface_v1* surface = zwlr_layer_shell_v1_get_layer_surface(shell, wl_surface, output->output, ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND, "glpaper");
+	enum zwlr_layer_shell_v1_layer layer;
+
+	if(layer_name == NULL) {
+		layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
+	} else if(strcasecmp(layer_name, "top") == 0) {
+		layer = ZWLR_LAYER_SHELL_V1_LAYER_TOP;
+	} else if(strcasecmp(layer_name, "bottom") == 0) {
+		layer = ZWLR_LAYER_SHELL_V1_LAYER_BOTTOM;
+	} else if(strcasecmp(layer_name, "background") == 0) {
+		layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
+	} else if(strcasecmp(layer_name, "overlay") == 0) {
+		layer = ZWLR_LAYER_SHELL_V1_LAYER_OVERLAY;
+	} else {
+		layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
+	}
+	struct zwlr_layer_surface_v1* surface = zwlr_layer_shell_v1_get_layer_surface(shell, wl_surface, output->output, layer, "glpaper");
 	struct zwlr_layer_surface_v1_listener surface_listener = {
 		.closed = nop,
 		.configure = config_surface
