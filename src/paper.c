@@ -18,7 +18,7 @@
 #include <paper.h>
 
 static const char* monitor;
-static struct node* output;
+static struct node* output = NULL;
 static struct wl_list outputs;
 static struct wl_compositor* comp;
 static struct zwlr_layer_shell_v1* shell;
@@ -114,6 +114,11 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 		wl_output_add_listener(node->output, &out_listener, node);
 	}
 	wl_display_roundtrip(wl);
+
+	if(output == NULL) {
+		fprintf(stderr, ":/ sorry about this but we can't seem to find that output\n");
+		exit(1);
+	}
 
 
 	struct wl_surface* wl_surface = wl_compositor_create_surface(comp);
