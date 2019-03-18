@@ -27,7 +27,6 @@ static time_t start;
 
 struct node {
 	struct wl_output* output;
-	const char* name;
 	int32_t width, height;
 	struct wl_list link;
 };
@@ -52,7 +51,6 @@ static void add_interface(void* data, struct wl_registry* registry, uint32_t nam
 static void get_name(void* data, struct zxdg_output_v1* xdg_output, const char* name) {
 	(void) xdg_output;
 	struct node* node = data;
-	node->name = name;
 	if(strcmp(name, monitor) == 0) {
 		output = node;
 	}
