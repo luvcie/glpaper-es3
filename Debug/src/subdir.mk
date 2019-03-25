@@ -5,19 +5,16 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../src/main.c \
-../src/map.c \
 ../src/paper.c \
 ../src/utils.c 
 
 OBJS += \
 ./src/main.o \
-./src/map.o \
 ./src/paper.o \
 ./src/utils.o 
 
 C_DEPS += \
 ./src/main.d \
-./src/map.d \
 ./src/paper.d \
 ./src/utils.d 
 

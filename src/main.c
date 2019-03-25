@@ -15,10 +15,10 @@
     along with GLPaper.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <map.h>
 #include <paper.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <getopt.h>
 
 static void print_usage(char** argv) {
 	char* slash = strrchr(argv[0], '/');
@@ -36,52 +36,57 @@ static void print_usage(char** argv) {
 	exit(0);
 }
 
-static struct map* parse_args(int argc, char** argv) {
-	struct map* ret = map_init();
-	struct map* abrev = map_init();
-	map_put(abrev, "f", "fps");
-	map_put(abrev, "l", "layer");
-	if(argc > 1) {
-		for(uint8_t count = 1; count < argc; ++count) {
-			if(strcmp(argv[count], "-h") == 0 || strcmp(argv[count], "--help") == 0) {
+int main(int argc, char** argv) {
+	if(argc > 2) {
+		struct option opts[] = {
+			{
+				.name = "help",
+				.has_arg = no_argument,
+				.flag = NULL,
+				.val = 'h'
+			},
+			{
+				.name = "fps",
+				.has_arg = required_argument,
+				.flag = NULL,
+				.val = 'f'
+			},
+			{
+				.name = "layer",
+				.has_arg = required_argument,
+				.flag = NULL,
+				.val = 'l'
+			},
+			{
+				.name = NULL,
+				.has_arg = 0,
+				.flag = NULL,
+				.val = 0
+			}
+		};
+		char* fpsStr = NULL;
+		char* layer = NULL;
+		char opt;
+		while((opt = getopt_long(argc, argv, "hf:l:", opts, NULL)) != -1) {
+			switch(opt) {
+			case 'h':
 				print_usage(argv);
-			} else {
-				if(strncmp(argv[count], "--", 2) == 0) {
-					map_put(ret, argv[count] + 2, argv[count + 1]);
-					++count;
-				} else if(strncmp(argv[count], "-", 1) == 0) {
-					size_t len = strlen(argv[count]);
-					for(uint8_t chr = 1; chr < len; ++chr) {
-						char str[2] = {argv[count][chr], 0};
-						map_put(ret, map_get(abrev, str), argv[++count]);
-					}
-				} else {
-					if(count + 1 >= argc) {
-						print_usage(argv);
-					}
-					map_put(ret, "_output", argv[count++]);
-					map_put(ret, "_shader", argv[count]);
-				}
+				break;
+			case 'f':
+				fpsStr = optarg;
+				break;
+			case 'l':
+				layer = optarg;
+				break;
 			}
 		}
-	} else {
-		print_usage(argv);
-	}
-	map_free(abrev);
-	return ret;
-}
-
-int main(int argc, char** argv) {
-	struct map* args = parse_args(argc, argv);
-	if(argc > 2) {
-		char* fpsStr = map_get(args, "fps");
 		uint16_t fps;
 		if(fpsStr == NULL) {
 			fps = 0;
 		} else {
 			fps = strtol(fpsStr, NULL, 10);
 		}
-		paper_init(map_get(args, "_output"), map_get(args, "_shader"), fps, map_get(args, "layer"));
+		paper_init(argv[optind], argv[optind + 1], fps, layer);
 	} else {
 		print_usage(argv);
 	}
