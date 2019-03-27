@@ -14,3 +14,5 @@ GLPaper is a wallpaper program for wlroots based wayland compositors such as swa
 	sudo rm /usr/bin/glpaper
 ## Bug Reports
 Please file bug reports at https://todo.sr.ht/~scoopta/glpaper
+## Packages
+If you're on Arch there's an unofficial AUR package https://aur.archlinux.org/packages/glpaper-hg/
