@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-USER_OBJS := ../lib/glad.o
+USER_OBJS :=
 
-LIBS := -ldl -lEGL -lwayland-egl -lclient_protos -lwayland-client
+LIBS := -ldl -lEGL -lwayland-egl -lwayland-client
 
