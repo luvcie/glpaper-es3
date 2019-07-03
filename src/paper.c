@@ -152,7 +152,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	wl_display_roundtrip(wl);
 
 	struct wl_egl_window* window = wl_egl_window_create(wl_surface, output->width, output->height);
-	eglBindAPI(EGL_OPENGL_API);
+	eglBindAPI(EGL_OPENGL_ES_API);
 	EGLDisplay egl_display = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl, NULL);
 	eglInitialize(egl_display, NULL, NULL);
 	const EGLint win_attrib[] = {
@@ -168,9 +168,8 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	EGLint config_len;
 	eglChooseConfig(egl_display, win_attrib, &config, 1, &config_len);
 	const EGLint ctx_attrib[] = {
-		EGL_CONTEXT_MAJOR_VERSION, 3,
-		EGL_CONTEXT_MINOR_VERSION, 3,
-		EGL_CONTEXT_OPENGL_PROFILE_MASK, EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
+		EGL_CONTEXT_MAJOR_VERSION, 2,
+		EGL_CONTEXT_MINOR_VERSION, 0,
 		EGL_NONE
 	};
 	EGLContext ctx = eglCreateContext(egl_display, config, EGL_NO_CONTEXT, ctx_attrib);
@@ -183,12 +182,9 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 		eglSwapInterval(egl_display, 0);
 	}
 
-	gladLoadGL();
+	gladLoadGLES2Loader((GLADloadproc) eglGetProcAddress);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glViewport(0, 0, output->width, output->height);
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
 	GLfloat vbo_data[] = {
 		-1.0f, 1.0f,	//Top left
 		-1.0f, -1.0f,	//Bottom left
@@ -213,8 +209,8 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
 
-	const char* vert_data[] = {"#version 330 core\n"
-			"layout(location = 0) in vec2 datIn;"
+	const char* vert_data[] = {"#version 100\n"
+			"attribute highp vec2 datIn;"
 
 			"void main() {"
 			"	gl_Position = vec4(datIn, 0.0f, 1.0f);"
