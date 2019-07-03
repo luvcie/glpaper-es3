@@ -17,6 +17,7 @@
 
 #include <paper.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <stdint.h>
 #include <getopt.h>
 
@@ -31,6 +32,7 @@ static void print_usage(char** argv) {
 	printf("%s [options] <output> <shader>\n", argv[0] + offset);
 	printf("Options:\n");
 	printf("--help\t-h\tDisplays this help message\n");
+	printf("--fork\t-F\tForks glpaper so you can close the terminal\n");
 	printf("--fps\t-f\tSets the FPS to render at\n");
 	printf("--layer\t-l\tSpecifies layer to run on\n");
 	exit(0);
@@ -44,6 +46,12 @@ int main(int argc, char** argv) {
 				.has_arg = no_argument,
 				.flag = NULL,
 				.val = 'h'
+			},
+			{
+				.name = "fork",
+				.has_arg = no_argument,
+				.flag = NULL,
+				.val = 'F'
 			},
 			{
 				.name = "fps",
@@ -67,10 +75,15 @@ int main(int argc, char** argv) {
 		char* fpsStr = NULL;
 		char* layer = NULL;
 		char opt;
-		while((opt = getopt_long(argc, argv, "hf:l:", opts, NULL)) != -1) {
+		while((opt = getopt_long(argc, argv, "hFf:l:", opts, NULL)) != -1) {
 			switch(opt) {
 			case 'h':
 				print_usage(argv);
+				break;
+			case 'F':
+				if(fork() > 0) {
+					exit(0);
+				}
 				break;
 			case 'f':
 				fpsStr = optarg;
