@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -ldl -lEGL -lwayland-egl -lwayland-client
+LIBS := -lEGL -lwayland-egl -lwayland-client
 
