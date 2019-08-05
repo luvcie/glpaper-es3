@@ -84,6 +84,9 @@ int main(int argc, char** argv) {
 				if(fork() > 0) {
 					exit(0);
 				}
+				fclose(stdout);
+				fclose(stderr);
+				fclose(stdin);
 				break;
 			case 'f':
 				fpsStr = optarg;
