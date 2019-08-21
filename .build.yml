@@ -1,0 +1,10 @@
+image: debian/sid
+packages:
+ - build-essential
+ - libwayland-dev
+ - libegl1-mesa-dev
+
+tasks:
+ - build: |
+    cd glpaper/Release
+    make
