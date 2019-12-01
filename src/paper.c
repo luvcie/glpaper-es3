@@ -209,12 +209,14 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
 
-	const char* vert_data[] = {"#version 100\n"
-			"attribute highp vec2 datIn;"
+	const char* vert_data[] = {
+		"#version 100\n"
+		"attribute highp vec2 datIn;"
 
-			"void main() {"
-			"	gl_Position = vec4(datIn, 0.0f, 1.0f);"
-			"}"};
+		"void main() {"
+		"	gl_Position = vec4(datIn, 0.0f, 1.0f);"
+		"}"
+	};
 
 	GLuint shader_prog = glCreateProgram();
 	GLuint vert = glCreateShader(GL_VERTEX_SHADER);
