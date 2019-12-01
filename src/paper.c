@@ -195,7 +195,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	GLuint vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8, vbo_data, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vbo_data), vbo_data, GL_STATIC_DRAW);
 
 	GLuint ebo_data[] = {
 		0, 1, 2,
@@ -205,7 +205,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	GLuint ebo;
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * 6, ebo_data, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ebo_data), ebo_data, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
 
@@ -225,7 +225,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	glGetShaderiv(vert, GL_COMPILE_STATUS, &status);
 	if(!status) {
 		char buff[255];
-		glGetShaderInfoLog(vert, 255, NULL, buff);
+		glGetShaderInfoLog(vert, sizeof(buff), NULL, buff);
 		fprintf(stderr, "Vert: %s\n", buff);
 		exit(1);
 	}
@@ -246,7 +246,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	glGetShaderiv(frag, GL_COMPILE_STATUS, &status);
 	if(!status) {
 		char buff[255];
-		glGetShaderInfoLog(frag, 255, NULL, buff);
+		glGetShaderInfoLog(frag, sizeof(buff), NULL, buff);
 		fprintf(stderr, "Frag: %s\n", buff);
 		exit(1);
 	}
@@ -258,7 +258,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	glGetProgramiv(shader_prog, GL_LINK_STATUS, &status);
 	if(!status) {
 		char buff[255];
-		glGetProgramInfoLog(shader_prog, 255, NULL, buff);
+		glGetProgramInfoLog(shader_prog, sizeof(buff), NULL, buff);
 		fprintf(stderr, "Shader: %s\n", buff);
 		exit(1);
 	}
