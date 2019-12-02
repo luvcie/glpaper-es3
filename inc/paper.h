@@ -32,6 +32,6 @@
 #include <xdg-output-unstable-v1-client-protocol.h>
 #include <wlr-layer-shell-unstable-v1-client-protocol.h>
 
-void paper_init(char* monitor, char* frag_path, uint16_t fps, char* layer_name);
+void paper_init(char* monitor, char* frag_path, uint16_t fps, char* layer_name, uint16_t width, uint16_t height);
 
 #endif

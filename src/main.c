@@ -31,10 +31,12 @@ static void print_usage(char** argv) {
 	}
 	printf("%s [options] <output> <shader>\n", argv[0] + offset);
 	printf("Options:\n");
-	printf("--help\t-h\tDisplays this help message\n");
-	printf("--fork\t-F\tForks glpaper so you can close the terminal\n");
-	printf("--fps\t-f\tSets the FPS to render at\n");
-	printf("--layer\t-l\tSpecifies layer to run on\n");
+	printf("--help\t\t-h\tDisplays this help message\n");
+	printf("--fork\t\t-F\tForks glpaper so you can close the terminal\n");
+	printf("--fps\t\t-f\tSets the FPS to render at\n");
+	printf("--layer\t\t-l\tSpecifies layer to run on\n");
+	printf("--width\t\t-W\tThe width to render at, this does not affect display resolution\n");
+	printf("--height\t-H\tThe height to render at, this does not affect display resolution\n");
 	exit(0);
 }
 
@@ -66,16 +68,30 @@ int main(int argc, char** argv) {
 				.val = 'l'
 			},
 			{
+				.name = "width",
+				.has_arg = required_argument,
+				.flag = NULL,
+				.val = 'W'
+			},
+			{
+				.name = "height",
+				.has_arg = required_argument,
+				.flag = NULL,
+				.val = 'H'
+			},
+			{
 				.name = NULL,
 				.has_arg = 0,
 				.flag = NULL,
 				.val = 0
 			}
 		};
-		char* fpsStr = NULL;
+		char* fps_str = NULL;
 		char* layer = NULL;
+		char* width_str = NULL;
+		char* height_str = NULL;
 		char opt;
-		while((opt = getopt_long(argc, argv, "hFf:l:", opts, NULL)) != -1) {
+		while((opt = getopt_long(argc, argv, "hFf:l:W:H:", opts, NULL)) != -1) {
 			switch(opt) {
 			case 'h':
 				print_usage(argv);
@@ -89,20 +105,41 @@ int main(int argc, char** argv) {
 				fclose(stdin);
 				break;
 			case 'f':
-				fpsStr = optarg;
+				fps_str = optarg;
 				break;
 			case 'l':
 				layer = optarg;
 				break;
+			case 'W':
+				width_str = optarg;
+				break;
+			case 'H':
+				height_str = optarg;
+				break;
 			}
 		}
 		uint16_t fps;
-		if(fpsStr == NULL) {
+		if(fps_str == NULL) {
 			fps = 0;
 		} else {
-			fps = strtol(fpsStr, NULL, 10);
+			fps = strtol(fps_str, NULL, 10);
 		}
-		paper_init(argv[optind], argv[optind + 1], fps, layer);
+
+		uint16_t width;
+		if(width_str == NULL) {
+			width = 0;
+		} else {
+			width = strtol(width_str, NULL, 10);
+		}
+
+		uint16_t height;
+		if(height_str == NULL) {
+			height = 0;
+		} else {
+			height = strtol(height_str, NULL, 10);
+		}
+
+		paper_init(argv[optind], argv[optind + 1], fps, layer, width, height);
 	} else {
 		print_usage(argv);
 	}

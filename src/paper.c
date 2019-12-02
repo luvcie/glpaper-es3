@@ -75,7 +75,92 @@ static void get_res(void* data, struct wl_output* output, uint32_t flags, int32_
 	}
 }
 
-void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name) {
+static void setup_fbo(GLuint* fbo, GLuint* prog, GLuint* texture, GLuint vert, uint16_t width, uint16_t height) {
+	const char* frag_data[] = {
+		"#version 100\n"
+		"uniform sampler2D tex2D;"
+
+		"varying highp vec2 texCoords;"
+
+		"void main() {"
+		"	gl_FragColor = texture2D(tex2D, texCoords);"
+		"}"
+	};
+
+	*prog = glCreateProgram();
+	GLuint frag = glCreateShader(GL_FRAGMENT_SHADER);
+	GLint frag_len[] = {strlen(frag_data[0])};
+	glShaderSource(frag, 1, frag_data, frag_len);
+	glCompileShader(frag);
+
+	GLint status;
+	glGetShaderiv(frag, GL_COMPILE_STATUS, &status);
+	if(!status) {
+		char buff[255];
+		glGetShaderInfoLog(frag, sizeof(buff), NULL, buff);
+		fprintf(stderr, "Texture Frag: %s\n", buff);
+		exit(1);
+	}
+
+	glAttachShader(*prog, vert);
+	glAttachShader(*prog, frag);
+	glLinkProgram(*prog);
+
+	glBindAttribLocation(*prog, 0, "datIn");
+	glBindAttribLocation(*prog, 1, "texIn");
+
+	glGetProgramiv(*prog, GL_LINK_STATUS, &status);
+	if(!status) {
+		char buff[255];
+		glGetProgramInfoLog(*prog, sizeof(buff), NULL, buff);
+		fprintf(stderr, "Texture Shader: %s\n", buff);
+		exit(1);
+	}
+
+	glGenFramebuffers(1, fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+
+	glGenTextures(1, texture);
+	glBindTexture(GL_TEXTURE_2D, *texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, *texture, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+static void draw(GLuint prog) {
+	glUseProgram(prog);
+	glClear(GL_COLOR_BUFFER_BIT);
+	GLint time_var = glGetUniformLocation(prog, "time");
+	glUniform1f(time_var, (utils_get_time_millis() - start) / 1000.0f);
+	GLint resolution = glGetUniformLocation(prog, "resolution");
+	glUniform2f(resolution, output->width, output->height);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+static void draw_fbo(GLuint fbo, GLuint texture, GLuint main_prog, GLuint final_prog, uint16_t width, uint16_t height) {
+	glUseProgram(main_prog);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	GLint time_var = glGetUniformLocation(main_prog, "time");
+	glUniform1f(time_var, (utils_get_time_millis() - start) / 1000.0f);
+	GLint resolution = glGetUniformLocation(main_prog, "resolution");
+	glUniform2f(resolution, width, height);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(final_prog);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	GLint tex2D = glGetUniformLocation(final_prog, "tex2D");
+	glUniform1i(tex2D, 0);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name, uint16_t width, uint16_t height) {
 	monitor = _monitor;
 	start = utils_get_time_millis();
 	wl_list_init(&outputs);
@@ -186,10 +271,11 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glViewport(0, 0, output->width, output->height);
 	GLfloat vbo_data[] = {
-		-1.0f, 1.0f,	//Top left
-		-1.0f, -1.0f,	//Bottom left
-		1.0f, -1.0f,	//Bottom right
-		1.0f, 1.0f		//Top right
+		//Vertex Data	//Texture data
+		-1.0f, 1.0f,	0.0f, 1.0f, //Top left
+		-1.0f, -1.0f,	0.0f, 0.0f, //Bottom left
+		1.0f, -1.0f,	1.0f, 0.0f, //Bottom right
+		1.0f, 1.0f,		1.0f, 1.0f, //Top right
 	};
 
 	GLuint vbo;
@@ -206,14 +292,21 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ebo_data), ebo_data, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*) (2 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
 	const char* vert_data[] = {
 		"#version 100\n"
 		"attribute highp vec2 datIn;"
+		"attribute highp vec2 texIn;"
+
+		"varying vec2 texCoords;"
 
 		"void main() {"
+		"	texCoords = texIn;"
 		"	gl_Position = vec4(datIn, 0.0f, 1.0f);"
 		"}"
 	};
@@ -256,6 +349,8 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 	glAttachShader(shader_prog, vert);
 	glAttachShader(shader_prog, frag);
 	glLinkProgram(shader_prog);
+	glBindAttribLocation(shader_prog, 0, "datIn");
+	glBindAttribLocation(shader_prog, 1, "texIn");
 
 	glGetProgramiv(shader_prog, GL_LINK_STATUS, &status);
 	if(!status) {
@@ -264,6 +359,22 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 		fprintf(stderr, "Shader: %s\n", buff);
 		exit(1);
 	}
+
+
+	bool use_fbo = width > 0 || height > 0;
+	GLuint fbo = 0;
+	GLuint final_prog = 0;
+	GLuint render_tex = 0;
+	if(use_fbo) {
+		if(width == 0) {
+			width = output->width;
+		}
+		if(height == 0) {
+			height = output->height;
+		}
+		setup_fbo(&fbo, &final_prog, &render_tex, vert, width, height);
+	}
+
 	glDeleteShader(vert);
 	glDeleteShader(frag);
 	glUseProgram(shader_prog);
@@ -275,12 +386,11 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name)
 		if(wl_display_flush(wl) == -1) {
 			exit(0);
 		}
-		glClear(GL_COLOR_BUFFER_BIT);
-		GLint time_var = glGetUniformLocation(shader_prog, "time");
-		glUniform1f(time_var, (utils_get_time_millis() - start) / 1000.0f);
-		GLint resolution = glGetUniformLocation(shader_prog, "resolution");
-		glUniform2f(resolution, output->width, output->height);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		if(use_fbo) {
+			draw_fbo(fbo, render_tex, shader_prog, final_prog, width, height);
+		} else {
+			draw(shader_prog);
+		}
 		eglSwapBuffers(egl_display, egl_surface);
 		if(fps != 0) {
 			int64_t sleep = (1000 / fps) - (utils_get_time_millis() - frame_start);
