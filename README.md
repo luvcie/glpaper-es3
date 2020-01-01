@@ -5,15 +5,18 @@ GLPaper is a wallpaper program for wlroots based wayland compositors such as swa
 [![builds.sr.ht status](https://builds.sr.ht/~scoopta/glpaper.svg)](https://builds.sr.ht/~scoopta/glpaper?)
 ## Dependencies
 	libwayland-dev
-	libegl1-mesa-dev
+	libegl-dev
+	pkg-config
+	meson
 ## Building
 	hg clone https://hg.sr.ht/~scoopta/glpaper
-	cd glpaper/Release
-	make
+	cd glpaper
+	meson build
+	ninja -C build
 ## Installing
-	sudo cp glpaper /usr/bin
+	sudo ninja -C build install
 ## Uninstalling
-	sudo rm /usr/bin/glpaper
+	sudo ninja -C build uninstall
 ## Bug Reports
 Please file bug reports at https://todo.sr.ht/~scoopta/glpaper
 ## Packages

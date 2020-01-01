@@ -2,9 +2,12 @@ image: debian/sid
 packages:
  - build-essential
  - libwayland-dev
- - libegl1-mesa-dev
+ - libegl-dev
+ - pkg-config
+ - meson
 
 tasks:
  - build: |
-    cd glpaper/Release
-    make
+    cd glpaper
+    meson build
+    ninja -C build
