@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2019 Scoopta
+ *  Copyright (C) 2019-2020 Scoopta
  *  This file is part of GLPaper
  *  GLPaper is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,11 +15,14 @@
     along with GLPaper.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <paper.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdint.h>
 #include <getopt.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include <paper.h>
 
 static void print_usage(char** argv) {
 	char* slash = strrchr(argv[0], '/');

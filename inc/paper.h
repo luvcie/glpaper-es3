@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2019 Scoopta
+ *  Copyright (C) 2019-2020 Scoopta
  *  This file is part of GLPaper
  *  GLPaper is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,21 +18,7 @@
 #ifndef PAPER_H
 #define PAPER_H
 
-#include <time.h>
-#include <utils.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdbool.h>
-
-#include <glad/glad.h>
-#include <glad/glad_egl.h>
-#include <wayland-egl.h>
-#include <wayland-client.h>
-#include <xdg-output-unstable-v1-client-protocol.h>
-#include <wlr-layer-shell-unstable-v1-client-protocol.h>
 
 void paper_init(char* monitor, char* frag_path, uint16_t fps, char* layer_name, uint16_t width, uint16_t height);
 
