@@ -139,6 +139,10 @@ int main(int argc, char** argv) {
 			height = strtol(height_str, NULL, 10);
 		}
 
+		if(optind + 1 >= argc) {
+			print_usage(argv);
+		}
+
 		paper_init(argv[optind], argv[optind + 1], fps, layer, width, height);
 	} else {
 		print_usage(argv);

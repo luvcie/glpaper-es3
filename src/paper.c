@@ -325,6 +325,11 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 		exit(1);
 	}
 
+	if(access(frag_path, R_OK) != 0) {
+		fprintf(stderr, "I can't seem to find %s\n", frag_path);
+		exit(1);
+	}
+
 	FILE* f = fopen(frag_path, "r");
 	fseek(f, 0L, SEEK_END);
 	size_t f_size = ftell(f);
