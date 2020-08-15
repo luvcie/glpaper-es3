@@ -160,6 +160,7 @@ static void draw(GLuint prog) {
 }
 
 static void draw_fbo(GLuint fbo, GLuint texture, GLuint main_prog, GLuint final_prog, uint16_t width, uint16_t height) {
+	glViewport(0, 0, width, height);
 	glUseProgram(main_prog);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	GLint time_var = glGetUniformLocation(main_prog, "time");
@@ -168,6 +169,7 @@ static void draw_fbo(GLuint fbo, GLuint texture, GLuint main_prog, GLuint final_
 	glUniform2f(resolution, width, height);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+	glViewport(0, 0, output->width, output->height);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(final_prog);
 	glBindTexture(GL_TEXTURE_2D, texture);
