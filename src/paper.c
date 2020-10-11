@@ -77,8 +77,6 @@ static void config_surface(void* data, struct zwlr_layer_surface_v1* surface, ui
 	(void) width;
 	(void) height;
 	zwlr_layer_surface_v1_ack_configure(surface, serial);
-	zwlr_layer_surface_v1_set_exclusive_zone(surface, -1);
-	zwlr_layer_surface_v1_set_size(surface, output->width, output->height);
 }
 
 static void get_res(void* data, struct wl_output* output, uint32_t flags, int32_t width, int32_t height, int32_t refresh) {
@@ -246,6 +244,8 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 		layer = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND;
 	}
 	struct zwlr_layer_surface_v1* surface = zwlr_layer_shell_v1_get_layer_surface(shell, wl_surface, output->output, layer, "glpaper");
+	zwlr_layer_surface_v1_set_exclusive_zone(surface, -1);
+	zwlr_layer_surface_v1_set_size(surface, output->width, output->height);
 	struct zwlr_layer_surface_v1_listener surface_listener = {
 		.closed = nop,
 		.configure = config_surface
