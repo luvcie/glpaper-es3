@@ -33,6 +33,8 @@
 #include <xdg-output-unstable-v1-client-protocol.h>
 #include <wlr-layer-shell-unstable-v1-client-protocol.h>
 
+#define PROTO_VERSION(v1, v2) (v1 < v2 ? v1 : v2)
+
 static const char* monitor;
 static struct node* output = NULL;
 static struct wl_list outputs;
@@ -53,14 +55,14 @@ static void add_interface(void* data, struct wl_registry* registry, uint32_t nam
 	(void) data;
 	if(strcmp(interface, wl_output_interface.name) == 0) {
 		struct node* node = malloc(sizeof(struct node));
-		node->output = wl_registry_bind(registry, name, &wl_output_interface, version);
+		node->output = wl_registry_bind(registry, name, &wl_output_interface, PROTO_VERSION(version, 4));
 		wl_list_insert(&outputs, &node->link);
 	} else if(strcmp(interface, wl_compositor_interface.name) == 0) {
-		comp = wl_registry_bind(registry, name, &wl_compositor_interface, version);
+		comp = wl_registry_bind(registry, name, &wl_compositor_interface, PROTO_VERSION(version, 4));
 	} else if(strcmp(interface, zxdg_output_manager_v1_interface.name) == 0) {
-		output_manager = wl_registry_bind(registry, name, &zxdg_output_manager_v1_interface, version);
+		output_manager = wl_registry_bind(registry, name, &zxdg_output_manager_v1_interface, PROTO_VERSION(version, 3));
 	} else if(strcmp(interface, zwlr_layer_shell_v1_interface.name) == 0) {
-		shell = wl_registry_bind(registry, name, &zwlr_layer_shell_v1_interface, version);
+		shell = wl_registry_bind(registry, name, &zwlr_layer_shell_v1_interface, PROTO_VERSION(version, 4));
 	}
 }
 
@@ -208,7 +210,9 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 			.done = nop,
 			.geometry = nop,
 			.mode = get_res,
-			.scale = nop
+			.scale = nop,
+			.name = nop,
+			.description = nop
 		};
 		wl_output_add_listener(node->output, &out_listener, node);
 	}
