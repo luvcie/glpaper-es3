@@ -329,7 +329,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 
 		"void main() {"
 		"	texCoords = texIn;"
-		"	gl_Position = vec4(datIn, 0.0f, 1.0f);"
+		"	gl_Position = vec4(datIn, 0.0, 1.0);"
 		"}"
 	};
 
