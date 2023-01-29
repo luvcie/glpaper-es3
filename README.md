@@ -11,7 +11,7 @@ GLPaper is a wallpaper program for wlroots based wayland compositors such as swa
 ## Building
 	hg clone https://hg.sr.ht/~scoopta/glpaper
 	cd glpaper
-	meson build
+	meson setup build
 	ninja -C build
 ## Installing
 	sudo ninja -C build install
