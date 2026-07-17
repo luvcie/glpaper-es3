@@ -93,7 +93,7 @@ static void get_res(void* data, struct wl_output* output, uint32_t flags, int32_
 
 static void setup_fbo(GLuint* fbo, GLuint* prog, GLuint* texture, GLuint vert, uint16_t width, uint16_t height) {
 	const char* frag_data[] = {
-		"#version 300 es\n"
+		"#version 320 es\n"
 		"precision highp float;"
 		"uniform sampler2D tex2D;"
 
@@ -278,7 +278,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 	eglChooseConfig(egl_display, win_attrib, &config, 1, &config_len);
 	const EGLint ctx_attrib[] = {
 		EGL_CONTEXT_MAJOR_VERSION, 3,
-		EGL_CONTEXT_MINOR_VERSION, 0,
+		EGL_CONTEXT_MINOR_VERSION, 2,
 		EGL_NONE
 	};
 	EGLContext ctx = eglCreateContext(egl_display, config, EGL_NO_CONTEXT, ctx_attrib);
@@ -323,7 +323,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 	glEnableVertexAttribArray(1);
 
 	const char* vert_data[] = {
-		"#version 300 es\n"
+		"#version 320 es\n"
 		"layout(location = 0) in vec2 datIn;"
 		"layout(location = 1) in vec2 texIn;"
 

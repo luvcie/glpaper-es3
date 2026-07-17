@@ -3,10 +3,10 @@
 GLPaper is a wallpaper program for wlroots based wayland compositors such as sway that allows you to render glsl shaders as your wallpaper
 
 > **Fork note:** This is a fork of [scoopta's glpaper](https://hg.sr.ht/~scoopta/glpaper)
-> (imported at rev `af9827d20bfe`) patched to use an **OpenGL ES 3.0 context** so
-> fragment shaders can be written in **GLSL ES 3.00** instead of the original ES 1.00.
+> (imported at rev `af9827d20bfe`) patched to use an **OpenGL ES 3.2 context** so
+> fragment shaders can be written in **GLSL ES 3.20** instead of the original ES 1.00.
 >
-> Your shaders must now start with `#version 300 es` and use modern syntax:
+> Your shaders must now start with `#version 320 es` and use modern syntax:
 > - `in vec2 texCoords;` (was `varying`)
 > - `out vec4 fragColor;` + write `fragColor` (was `gl_FragColor`)
 > - `texture(...)` (was `texture2D`)
