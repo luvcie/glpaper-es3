@@ -93,13 +93,15 @@ static void get_res(void* data, struct wl_output* output, uint32_t flags, int32_
 
 static void setup_fbo(GLuint* fbo, GLuint* prog, GLuint* texture, GLuint vert, uint16_t width, uint16_t height) {
 	const char* frag_data[] = {
-		"#version 100\n"
+		"#version 300 es\n"
+		"precision highp float;"
 		"uniform sampler2D tex2D;"
 
-		"varying highp vec2 texCoords;"
+		"in vec2 texCoords;"
+		"out vec4 fragColor;"
 
 		"void main() {"
-		"	gl_FragColor = texture2D(tex2D, texCoords);"
+		"	fragColor = texture(tex2D, texCoords);"
 		"}"
 	};
 
@@ -264,7 +266,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 	eglInitialize(egl_display, NULL, NULL);
 	const EGLint win_attrib[] = {
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
 		EGL_RED_SIZE, 8,
 		EGL_GREEN_SIZE, 8,
 		EGL_BLUE_SIZE, 8,
@@ -275,7 +277,7 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 	EGLint config_len;
 	eglChooseConfig(egl_display, win_attrib, &config, 1, &config_len);
 	const EGLint ctx_attrib[] = {
-		EGL_CONTEXT_MAJOR_VERSION, 2,
+		EGL_CONTEXT_MAJOR_VERSION, 3,
 		EGL_CONTEXT_MINOR_VERSION, 0,
 		EGL_NONE
 	};
@@ -321,11 +323,11 @@ void paper_init(char* _monitor, char* frag_path, uint16_t fps, char* layer_name,
 	glEnableVertexAttribArray(1);
 
 	const char* vert_data[] = {
-		"#version 100\n"
-		"attribute highp vec2 datIn;"
-		"attribute highp vec2 texIn;"
+		"#version 300 es\n"
+		"layout(location = 0) in vec2 datIn;"
+		"layout(location = 1) in vec2 texIn;"
 
-		"varying vec2 texCoords;"
+		"out vec2 texCoords;"
 
 		"void main() {"
 		"	texCoords = texIn;"
